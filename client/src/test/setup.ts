@@ -28,6 +28,9 @@ window.ResizeObserver = class {
 } as unknown as typeof ResizeObserver;
 
 HTMLElement.prototype.scrollIntoView = () => {};
+HTMLElement.prototype.hasPointerCapture = () => false;
+HTMLElement.prototype.setPointerCapture = () => {};
+HTMLElement.prototype.releasePointerCapture = () => {};
 
 // MSW lifecycle
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
