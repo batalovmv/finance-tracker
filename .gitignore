@@ -36,4 +36,5 @@ server/prisma/*.db-journal
 
 # Generated
 *.tsbuildinfo
+*.config.d.ts
 .cache/

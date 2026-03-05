@@ -4,9 +4,10 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "noEmit": true,
     "skipLibCheck": true,
-    "composite": true
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "declaration": true
   },
   "include": ["vite.config.ts", "vitest.config.ts"]
 }
