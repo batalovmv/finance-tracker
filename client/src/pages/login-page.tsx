@@ -41,7 +41,11 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit((data) => login(data))} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit((data) => login(data))}
+              noValidate
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="email"

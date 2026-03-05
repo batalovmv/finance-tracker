@@ -22,8 +22,11 @@ export function useAuth() {
       toast.success('Logged in successfully');
       navigate('/');
     },
-    onError: () => {
-      toast.error('Invalid email or password');
+    onError: (error) => {
+      const message = axios.isAxiosError(error)
+        ? (error.response?.data?.error?.message ?? 'Login failed')
+        : 'Login failed';
+      toast.error(message);
     },
   });
 

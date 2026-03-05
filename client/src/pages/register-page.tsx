@@ -41,7 +41,11 @@ export default function RegisterPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit((data) => register(data))} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit((data) => register(data))}
+              noValidate
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="name"
