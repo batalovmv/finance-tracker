@@ -37,7 +37,8 @@ export async function update(req: Request, res: Response, next: NextFunction) {
     const userId = req.userId;
     if (!userId) throw AppError.unauthorized();
 
-    const category = await categoryService.update(userId, req.params.id, req.body);
+    // req.params.id is guaranteed by route pattern /:id
+    const category = await categoryService.update(userId, req.params.id as string, req.body);
 
     res.json({ success: true, data: category });
   } catch (err) {
@@ -50,7 +51,8 @@ export async function remove(req: Request, res: Response, next: NextFunction) {
     const userId = req.userId;
     if (!userId) throw AppError.unauthorized();
 
-    await categoryService.remove(userId, req.params.id);
+    // req.params.id is guaranteed by route pattern /:id
+    await categoryService.remove(userId, req.params.id as string);
 
     res.status(204).send();
   } catch (err) {

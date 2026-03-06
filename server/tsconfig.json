@@ -13,7 +13,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "sourceMap": true,
-    "declaration": true,
+    "declaration": false,
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/src/*"]

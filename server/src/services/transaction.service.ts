@@ -38,7 +38,7 @@ function formatTransaction(tx: TransactionWithCategory): TransactionResponse {
 function parseSortParam(sort?: string): { field: string; direction: 'asc' | 'desc' } {
   if (!sort) return { field: 'date', direction: 'desc' };
 
-  const [field, direction] = sort.split(':');
+  const [field, direction] = sort.split(':') as [string, string | undefined];
   const allowedFields = ['date', 'amount', 'createdAt'];
   const validField = allowedFields.includes(field) ? field : 'date';
   const validDirection = direction === 'asc' ? 'asc' : 'desc';
