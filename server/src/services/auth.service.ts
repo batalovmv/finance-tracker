@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+
+const { TokenExpiredError } = jwt;
 
 import { AUTH } from '@shared/constants.js';
 import { AppError, ErrorCode } from '@shared/errors.js';
@@ -34,15 +36,19 @@ export async function register(input: RegisterInput) {
 
   const hashedPassword = await bcrypt.hash(input.password, AUTH.BCRYPT_ROUNDS);
 
-  const user = await prisma.user.create({
-    data: {
-      email: input.email,
-      password: hashedPassword,
-      name: input.name,
-    },
-  });
+  const user = await prisma.$transaction(async (tx) => {
+    const created = await tx.user.create({
+      data: {
+        email: input.email,
+        password: hashedPassword,
+        name: input.name,
+      },
+    });
 
-  await seedCategoriesForUser(user.id);
+    await seedCategoriesForUser(created.id, tx);
+
+    return created;
+  });
 
   const accessToken = signAccessToken({ userId: user.id });
   const refreshToken = signRefreshToken({ userId: user.id });

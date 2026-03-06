@@ -1,8 +1,13 @@
+import { type PrismaClient } from '@prisma/client';
+
 import { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from '@shared/constants.js';
 
-import { prisma } from './prisma.js';
+import { prisma as defaultPrisma } from './prisma.js';
 
-export async function seedCategoriesForUser(userId: string) {
+export async function seedCategoriesForUser(
+  userId: string,
+  client: Pick<PrismaClient, 'category'> = defaultPrisma,
+) {
   const categories = [
     ...DEFAULT_EXPENSE_CATEGORIES.map((c) => ({
       ...c,
@@ -16,7 +21,7 @@ export async function seedCategoriesForUser(userId: string) {
     })),
   ];
 
-  await prisma.category.createMany({
+  await client.category.createMany({
     data: categories,
     skipDuplicates: true,
   });

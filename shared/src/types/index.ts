@@ -13,7 +13,11 @@ import {
   type categoryResponseSchema,
   type categoryQuerySchema,
 } from '../schemas/category.js';
-import { type paginationMetaSchema, type apiErrorSchema } from '../schemas/common.js';
+import {
+  type paginationMetaSchema,
+  type apiErrorSchema,
+  type transactionTypeSchema,
+} from '../schemas/common.js';
 import {
   type summaryQuerySchema,
   type summaryResponseSchema,
@@ -82,4 +86,4 @@ export type ApiErrorResponse = {
   };
 };
 
-export type TransactionType = 'INCOME' | 'EXPENSE';
+export type TransactionType = z.infer<typeof transactionTypeSchema>;

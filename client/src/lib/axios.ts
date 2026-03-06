@@ -4,6 +4,12 @@ import { type ApiSuccessResponse, type TokenResponse } from '@shared/types';
 
 import { useAuthStore } from '@/stores/auth.store';
 
+declare module 'axios' {
+  interface InternalAxiosRequestConfig {
+    _retry?: boolean;
+  }
+}
+
 export const api = axios.create({
   baseURL: '/api',
   withCredentials: true,

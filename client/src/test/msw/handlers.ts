@@ -1,6 +1,13 @@
 import { http, HttpResponse } from 'msw';
 
-import { type CategoryResponse, type TransactionResponse, type UserResponse } from '@shared/types';
+import {
+  type ByCategoryItem,
+  type CategoryResponse,
+  type MonthlyTrendItem,
+  type SummaryResponse,
+  type TransactionResponse,
+  type UserResponse,
+} from '@shared/types';
 
 export const mockUser: UserResponse = {
   id: '00000000-0000-4000-8000-000000000001',
@@ -34,6 +41,31 @@ export const mockCategories: CategoryResponse[] = [
     icon: 'briefcase',
     createdAt: '2024-01-01T00:00:00.000Z',
   },
+];
+
+export const mockSummary: SummaryResponse = {
+  totalIncome: '5000.00',
+  totalExpense: '1250.00',
+  balance: '3750.00',
+};
+
+export const mockByCategory: ByCategoryItem[] = [
+  {
+    category: { id: 'cat-expense-1', name: 'Food & Dining', color: '#ef4444', icon: 'utensils' },
+    amount: '800.00',
+    percentage: 64,
+  },
+  {
+    category: { id: 'cat-expense-2', name: 'Transportation', color: '#f97316', icon: 'car' },
+    amount: '450.00',
+    percentage: 36,
+  },
+];
+
+export const mockMonthlyTrend: MonthlyTrendItem[] = [
+  { month: '2024-01', income: '5000.00', expense: '1250.00' },
+  { month: '2024-02', income: '4800.00', expense: '1400.00' },
+  { month: '2024-03', income: '5200.00', expense: '1100.00' },
 ];
 
 export const mockTransactions: TransactionResponse[] = [
@@ -177,12 +209,14 @@ export const handlers = [
   http.put('*/api/transactions/:id', async ({ request, params }) => {
     const body = (await request.json()) as Record<string, unknown>;
     const existing = mockTransactions.find((t) => t.id === params.id);
+    const categoryId = (body.categoryId as string | undefined) ?? existing?.categoryId;
 
     return HttpResponse.json({
       success: true,
       data: {
         ...existing,
         ...body,
+        category: mockCategories.find((c) => c.id === categoryId) ?? existing?.category,
         updatedAt: new Date().toISOString(),
       },
     });
@@ -190,5 +224,22 @@ export const handlers = [
 
   http.delete('*/api/transactions/:id', () => {
     return new HttpResponse(null, { status: 204 });
+  }),
+
+  // Statistics
+  http.get('*/api/statistics/summary', () => {
+    return HttpResponse.json({ success: true, data: mockSummary });
+  }),
+
+  http.get('*/api/statistics/by-category', ({ request }) => {
+    const url = new URL(request.url);
+    const type = url.searchParams.get('type');
+    // All mockByCategory items are EXPENSE — return empty for INCOME
+    const filtered = type === 'INCOME' ? [] : mockByCategory;
+    return HttpResponse.json({ success: true, data: filtered });
+  }),
+
+  http.get('*/api/statistics/monthly-trend', () => {
+    return HttpResponse.json({ success: true, data: mockMonthlyTrend });
   }),
 ];

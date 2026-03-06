@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
@@ -54,14 +52,10 @@ export function useAuth() {
     },
   });
 
-  const handleLogout = useCallback(() => {
-    logoutMutation.mutate();
-  }, [logoutMutation]);
-
   return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
-    logout: handleLogout,
+    logout: logoutMutation.mutate,
     isLoginPending: loginMutation.isPending,
     isRegisterPending: registerMutation.isPending,
     isAuthenticated,

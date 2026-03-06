@@ -1,5 +1,7 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+
+const { TokenExpiredError } = jwt;
 
 import { AppError, ErrorCode } from '@shared/errors.js';
 
@@ -9,7 +11,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
-    throw AppError.unauthorized('Missing or invalid authorization header');
+    return next(AppError.unauthorized('Missing or invalid authorization header'));
   }
 
   const token = authHeader.slice(7);
@@ -20,8 +22,8 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
     next();
   } catch (err) {
     if (err instanceof TokenExpiredError) {
-      throw new AppError(ErrorCode.AUTH_TOKEN_EXPIRED, 'Token has expired', 401);
+      return next(new AppError(ErrorCode.AUTH_TOKEN_EXPIRED, 'Token has expired', 401));
     }
-    throw new AppError(ErrorCode.AUTH_TOKEN_INVALID, 'Invalid token', 401);
+    return next(new AppError(ErrorCode.AUTH_TOKEN_INVALID, 'Invalid token', 401));
   }
 }

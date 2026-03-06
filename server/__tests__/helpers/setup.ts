@@ -1,8 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { beforeAll, afterAll, beforeEach } from 'vitest';
 
-import { prisma as appPrisma } from '../../src/lib/prisma.js';
-
 const testDatabaseUrl =
   process.env.DATABASE_URL_TEST ??
   'postgresql://finance:finance_dev@localhost:5433/finance_tracker_test';
@@ -32,7 +30,6 @@ beforeEach(async () => {
 });
 
 afterAll(async () => {
-  await appPrisma.$disconnect();
   await prisma.$disconnect();
 });
 

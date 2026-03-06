@@ -64,6 +64,7 @@ export async function exportCsv(req: Request, res: Response, next: NextFunction)
     const userId = req.userId;
     if (!userId) throw AppError.unauthorized();
 
+    // req.query is replaced by validate middleware with Zod-parsed TransactionExportQuery
     const query = req.query as unknown as TransactionExportQuery;
     const allData = await transactionService.listAll(userId, query);
     const csv = transactionsToCsv(allData);

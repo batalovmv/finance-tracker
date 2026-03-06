@@ -14,6 +14,7 @@ export async function summary(req: Request, res: Response, next: NextFunction) {
     const userId = req.userId;
     if (!userId) throw AppError.unauthorized();
 
+    // req.query is replaced by validate middleware with Zod-parsed SummaryQuery
     const data = await statisticsService.getSummary(userId, req.query as unknown as SummaryQuery);
 
     res.json({ success: true, data });
@@ -27,6 +28,7 @@ export async function byCategory(req: Request, res: Response, next: NextFunction
     const userId = req.userId;
     if (!userId) throw AppError.unauthorized();
 
+    // req.query is replaced by validate middleware with Zod-parsed ByCategoryQuery
     const data = await statisticsService.getByCategory(
       userId,
       req.query as unknown as ByCategoryQuery,
@@ -43,6 +45,7 @@ export async function monthlyTrend(req: Request, res: Response, next: NextFuncti
     const userId = req.userId;
     if (!userId) throw AppError.unauthorized();
 
+    // req.query is replaced by validate middleware with Zod-parsed MonthlyTrendQuery
     const data = await statisticsService.getMonthlyTrend(
       userId,
       req.query as unknown as MonthlyTrendQuery,

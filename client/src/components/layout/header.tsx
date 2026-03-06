@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { LogOut, Menu, Moon, Sun } from 'lucide-react';
+import { LogOut, Menu, Moon, Sun, UserCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -47,6 +47,7 @@ export function Header({ onMenuClick }: HeaderProps) {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="gap-2">
+            <UserCircle className="h-5 w-5 sm:hidden" />
             <span className="hidden sm:inline-block">{user?.name}</span>
           </Button>
         </DropdownMenuTrigger>

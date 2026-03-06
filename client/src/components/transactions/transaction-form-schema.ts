@@ -8,7 +8,10 @@ export const transactionFormSchema = z.object({
     .refine((val) => parseFloat(val) > 0, 'Amount must be positive'),
   type: z.enum(['INCOME', 'EXPENSE'], { required_error: 'Type is required' }),
   categoryId: z.string().min(1, 'Category is required'),
-  date: z.string().min(1, 'Date is required'),
+  date: z
+    .string()
+    .min(1, 'Date is required')
+    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Enter a valid date'),
   description: z.string().max(500).optional(),
 });
 

@@ -53,7 +53,7 @@ export const apiErrorSchema = z.object({
 
 export const sortQuerySchema = z
   .string()
-  .regex(/^[a-zA-Z]+:(asc|desc)$/)
+  .regex(/^(date|amount|createdAt):(asc|desc)$/, 'Invalid sort parameter')
   .optional();
 
 // --- Date Range Filter ---

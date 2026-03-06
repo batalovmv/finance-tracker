@@ -13,6 +13,12 @@ export function formatCurrency(amount: string): string {
   }).format(parseFloat(amount));
 }
 
+export function formatMonth(month: string): string {
+  const [year, m] = month.split('-');
+  // Construct from explicit integers — no TZ shift risk (matches formatDate pattern)
+  return format(new Date(parseInt(year), parseInt(m) - 1, 1), 'MMM yyyy');
+}
+
 export function formatDate(isoDate: string): string {
   const d = new Date(isoDate);
   // Create local Date from UTC components so format() displays the UTC date

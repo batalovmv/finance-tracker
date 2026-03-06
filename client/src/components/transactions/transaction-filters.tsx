@@ -33,7 +33,7 @@ export function TransactionFilters({
   categories,
 }: TransactionFiltersProps) {
   const activeTab = filters.type ?? 'ALL';
-  const hasFilters = filters.dateFrom || filters.dateTo || filters.categoryId;
+  const hasFilters = !!(filters.type || filters.dateFrom || filters.dateTo || filters.categoryId);
 
   const filteredCategories = filters.type
     ? categories.filter((c) => c.type === filters.type)
