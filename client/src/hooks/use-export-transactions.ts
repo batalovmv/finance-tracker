@@ -2,8 +2,11 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 import { type TransactionListParams, exportTransactionsCsv } from '@/api/transactions.api';
+import { useTranslation } from '@/i18n';
 
 export function useExportTransactions() {
+  const { t } = useTranslation();
+
   return useMutation({
     mutationFn: (params: Omit<TransactionListParams, 'page' | 'limit'>) =>
       exportTransactionsCsv(params),
@@ -16,10 +19,10 @@ export function useExportTransactions() {
       a.click();
       // Defer revocation so the browser can initiate the download
       setTimeout(() => URL.revokeObjectURL(url), 100);
-      toast.success('Transactions exported');
+      toast.success(t('toast.exportSuccess'));
     },
     onError: () => {
-      toast.error('Failed to export transactions');
+      toast.error(t('toast.exportError'));
     },
   });
 }

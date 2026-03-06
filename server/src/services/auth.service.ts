@@ -31,7 +31,7 @@ export async function register(input: RegisterInput) {
   });
 
   if (existingUser) {
-    throw AppError.conflict(ErrorCode.AUTH_EMAIL_EXISTS, 'Email is already registered');
+    throw AppError.conflict(ErrorCode.AUTH_EMAIL_EXISTS, 'Email already registered');
   }
 
   const hashedPassword = await bcrypt.hash(input.password, AUTH.BCRYPT_ROUNDS);

@@ -4,7 +4,9 @@ import { SummaryCards } from '@/components/dashboard/summary-cards';
 import { CategoryBreakdown } from '@/components/statistics/category-breakdown';
 import { MonthlyTrendChart } from '@/components/statistics/monthly-trend-chart';
 import { PeriodSelector } from '@/components/statistics/period-selector';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useByCategory, useMonthlyTrend, useSummary } from '@/hooks/use-statistics';
+import { useTranslation } from '@/i18n';
 
 function getDateRange(months: number) {
   const now = new Date();
@@ -20,26 +22,50 @@ function getDateRange(months: number) {
 }
 
 export default function StatisticsPage() {
+  const { t } = useTranslation();
   const [months, setMonths] = useState(12);
   const dateRange = getDateRange(months);
 
-  const { data: summary, isLoading: isSummaryLoading } = useSummary(dateRange);
-  const { data: expenseData, isLoading: isExpenseLoading } = useByCategory({
+  const {
+    data: summary,
+    isLoading: isSummaryLoading,
+    isError: isSummaryError,
+  } = useSummary(dateRange);
+  const {
+    data: expenseData,
+    isLoading: isExpenseLoading,
+    isError: isExpenseError,
+  } = useByCategory({
     ...dateRange,
     type: 'EXPENSE',
   });
-  const { data: incomeData, isLoading: isIncomeLoading } = useByCategory({
+  const {
+    data: incomeData,
+    isLoading: isIncomeLoading,
+    isError: isIncomeError,
+  } = useByCategory({
     ...dateRange,
     type: 'INCOME',
   });
-  const { data: trendData, isLoading: isTrendLoading } = useMonthlyTrend(months);
+  const {
+    data: trendData,
+    isLoading: isTrendLoading,
+    isError: isTrendError,
+  } = useMonthlyTrend(months);
+
+  const hasError = isSummaryError || isExpenseError || isIncomeError || isTrendError;
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold">Statistics</h1>
+        <h1 className="text-2xl font-bold">{t('statistics.title')}</h1>
         <PeriodSelector value={String(months)} onChange={(v) => setMonths(Number(v))} />
       </div>
+      {hasError && (
+        <Alert variant="destructive">
+          <AlertDescription>{t('statistics.loadError')}</AlertDescription>
+        </Alert>
+      )}
       <SummaryCards data={summary} isLoading={isSummaryLoading} />
       <div className="grid gap-6 lg:grid-cols-2">
         <CategoryBreakdown

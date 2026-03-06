@@ -85,7 +85,7 @@ export async function update(userId: string, categoryId: string, input: UpdateCa
   }
 
   if (category.userId !== userId) {
-    throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'You do not own this category');
+    throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'Access denied to this category');
   }
 
   // Check for duplicate name if name is being updated
@@ -130,7 +130,7 @@ export async function remove(userId: string, categoryId: string) {
   }
 
   if (category.userId !== userId) {
-    throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'You do not own this category');
+    throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'Access denied to this category');
   }
 
   // Check if category has transactions

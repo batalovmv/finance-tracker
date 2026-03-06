@@ -4,7 +4,8 @@ import { type MonthlyTrendItem } from '@shared/types';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency, formatMonth } from '@/lib/utils';
+import { useFormatters } from '@/hooks/use-formatters';
+import { useTranslation } from '@/i18n';
 
 type MonthlyTrendChartProps = {
   data: MonthlyTrendItem[] | undefined;
@@ -17,20 +18,23 @@ type ChartData = {
   expense: number;
 };
 
-function transformData(data: MonthlyTrendItem[]): ChartData[] {
-  return data.map((item) => ({
-    label: formatMonth(item.month),
-    income: parseFloat(item.income) || 0,
-    expense: parseFloat(item.expense) || 0,
-  }));
-}
-
 export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
+  const { t } = useTranslation();
+  const { formatCurrency, formatMonth } = useFormatters();
+
+  function transformData(items: MonthlyTrendItem[]): ChartData[] {
+    return items.map((item) => ({
+      label: formatMonth(item.month),
+      income: parseFloat(item.income) || 0,
+      expense: parseFloat(item.expense) || 0,
+    }));
+  }
+
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Monthly Trend</CardTitle>
+          <CardTitle>{t('statistics.monthlyTrend')}</CardTitle>
         </CardHeader>
         <CardContent>
           <Skeleton className="h-[300px] w-full" />
@@ -44,11 +48,13 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Monthly Trend</CardTitle>
+        <CardTitle>{t('statistics.monthlyTrend')}</CardTitle>
       </CardHeader>
       <CardContent>
         {!chartData.length ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">No trend data</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            {t('statistics.noTrendData')}
+          </p>
         ) : (
           <div className="space-y-4">
             <div className="h-[300px]">
@@ -70,8 +76,10 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
                           {payload.map((entry) => (
                             // as string: dataKey is always a string key from ChartData
                             <p key={entry.dataKey as string} className="text-muted-foreground">
-                              {entry.dataKey === 'income' ? 'Income' : 'Expenses'}:{' '}
-                              {formatCurrency(String(entry.value ?? 0))}
+                              {entry.dataKey === 'income'
+                                ? t('statistics.income')
+                                : t('statistics.expenses')}
+                              : {formatCurrency(String(entry.value ?? 0))}
                             </p>
                           ))}
                         </div>
@@ -85,12 +93,12 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
             </div>
             <div className="flex items-center justify-center gap-6 text-sm">
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-sm bg-green-500" />
-                <span>Income</span>
+                <span aria-hidden="true" className="h-3 w-3 rounded-sm bg-green-500" />
+                <span>{t('statistics.income')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-sm bg-red-500" />
-                <span>Expenses</span>
+                <span aria-hidden="true" className="h-3 w-3 rounded-sm bg-red-500" />
+                <span>{t('statistics.expenses')}</span>
               </div>
             </div>
           </div>

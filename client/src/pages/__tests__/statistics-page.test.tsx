@@ -30,56 +30,56 @@ describe('StatisticsPage', () => {
 
   it('should render statistics heading', () => {
     renderStatistics();
-    expect(screen.getByRole('heading', { name: /statistics/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /статистика/i })).toBeInTheDocument();
   });
 
   it('should render period selector with 12 months selected by default', () => {
     renderStatistics();
-    expect(screen.getByRole('tab', { name: /this month/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /3 months/i })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /6 months/i })).toBeInTheDocument();
-    const defaultTab = screen.getByRole('tab', { name: /12 months/i });
+    expect(screen.getByRole('tab', { name: /этот месяц/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /3 месяца/i })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /6 месяцев/i })).toBeInTheDocument();
+    const defaultTab = screen.getByRole('tab', { name: /12 месяцев/i });
     expect(defaultTab).toHaveAttribute('aria-selected', 'true');
   });
 
   it('should render summary cards with correct values', async () => {
     renderStatistics();
-    expect(await screen.findByText('$5,000.00')).toBeInTheDocument();
-    expect(screen.getByText('$1,250.00')).toBeInTheDocument();
-    expect(screen.getByText('$3,750.00')).toBeInTheDocument();
+    expect(await screen.findByText(/5\s000,00\s₽/)).toBeInTheDocument();
+    expect(screen.getByText(/1\s250,00\s₽/)).toBeInTheDocument();
+    expect(screen.getByText(/3\s750,00\s₽/)).toBeInTheDocument();
   });
 
   it('should render category breakdown with expense data', async () => {
     renderStatistics();
-    expect(await screen.findByText('Food & Dining')).toBeInTheDocument();
-    expect(screen.getByText('Transportation')).toBeInTheDocument();
+    expect(await screen.findByText('Еда и напитки')).toBeInTheDocument();
+    expect(screen.getByText('Транспорт')).toBeInTheDocument();
   });
 
   it('should show expense amounts and percentages in category legend', async () => {
     renderStatistics();
-    expect(await screen.findByText('$800.00 (64.0%)')).toBeInTheDocument();
-    expect(screen.getByText('$450.00 (36.0%)')).toBeInTheDocument();
+    expect(await screen.findByText(/800,00\s₽ \(64\.0%\)/)).toBeInTheDocument();
+    expect(screen.getByText(/450,00\s₽ \(36\.0%\)/)).toBeInTheDocument();
   });
 
   it('should toggle category breakdown to income and show empty state', async () => {
     const { user } = renderStatistics();
-    await screen.findByText('Food & Dining');
-    await user.click(screen.getByRole('tab', { name: /income/i }));
-    expect(await screen.findByText('No income data')).toBeInTheDocument();
+    await screen.findByText('Еда и напитки');
+    await user.click(screen.getByRole('tab', { name: /доходы/i }));
+    expect(await screen.findByText('Нет данных о доходах за период')).toBeInTheDocument();
   });
 
   it('should render monthly trend chart heading', async () => {
     renderStatistics();
-    expect(await screen.findByText('Monthly Trend')).toBeInTheDocument();
+    expect(await screen.findByText('Помесячная динамика')).toBeInTheDocument();
   });
 
   it('should render monthly trend chart with legend', async () => {
     renderStatistics();
-    // Wait for trend data to load — "Income" and "Expenses" also appear in category tabs
+    // Wait for trend data to load — "Доходы" and "Расходы" also appear in category tabs
     await waitFor(() => {
-      expect(screen.getAllByText('Income')).toHaveLength(2);
+      expect(screen.getAllByText('Доходы')).toHaveLength(2);
     });
-    expect(screen.getAllByText('Expenses')).toHaveLength(2);
+    expect(screen.getAllByText('Расходы')).toHaveLength(2);
   });
 
   it('should show empty trend state when no data', async () => {
@@ -89,7 +89,7 @@ describe('StatisticsPage', () => {
       }),
     );
     renderStatistics();
-    expect(await screen.findByText('No trend data')).toBeInTheDocument();
+    expect(await screen.findByText('Нет данных')).toBeInTheDocument();
   });
 
   it('should show empty category state when no expense data', async () => {
@@ -99,7 +99,15 @@ describe('StatisticsPage', () => {
       }),
     );
     renderStatistics();
-    expect(await screen.findByText('No expense data')).toBeInTheDocument();
+    expect(await screen.findByText('Нет данных о расходах за период')).toBeInTheDocument();
+  });
+
+  it('should show error alert when statistics fetch fails', async () => {
+    server.use(http.get('*/api/statistics/summary', () => HttpResponse.error()));
+
+    renderStatistics();
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/не удалось загрузить статистику/i)).toBeInTheDocument();
   });
 
   it('should refetch summary with filtered data when changing period', async () => {
@@ -120,10 +128,10 @@ describe('StatisticsPage', () => {
     );
 
     const { user } = renderStatistics();
-    await screen.findByText('$5,000.00');
+    await screen.findByText(/5\s000,00\s₽/);
 
-    await user.click(screen.getByRole('tab', { name: /this month/i }));
-    expect(await screen.findByText('$2,000.00')).toBeInTheDocument();
-    expect(screen.getByText('$1,200.00')).toBeInTheDocument();
+    await user.click(screen.getByRole('tab', { name: /этот месяц/i }));
+    expect(await screen.findByText(/2\s000,00\s₽/)).toBeInTheDocument();
+    expect(screen.getByText(/1\s200,00\s₽/)).toBeInTheDocument();
   });
 });

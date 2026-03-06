@@ -126,7 +126,7 @@ export async function create(userId: string, input: CreateTransactionInput) {
   }
 
   if (category.userId !== userId) {
-    throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'You do not own this category');
+    throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'Access denied to this category');
   }
 
   // Verify category type matches transaction type
@@ -162,7 +162,7 @@ export async function update(userId: string, transactionId: string, input: Updat
   }
 
   if (transaction.userId !== userId) {
-    throw AppError.forbidden(ErrorCode.TRANSACTION_FORBIDDEN, 'You do not own this transaction');
+    throw AppError.forbidden(ErrorCode.TRANSACTION_FORBIDDEN, 'Access denied to this transaction');
   }
 
   // Validate category/type consistency when either is being updated
@@ -177,7 +177,7 @@ export async function update(userId: string, transactionId: string, input: Updat
     }
 
     if (category.userId !== userId) {
-      throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'You do not own this category');
+      throw AppError.forbidden(ErrorCode.CATEGORY_FORBIDDEN, 'Access denied to this category');
     }
 
     const effectiveType = input.type ?? transaction.type;
@@ -214,7 +214,7 @@ export async function remove(userId: string, transactionId: string) {
   }
 
   if (transaction.userId !== userId) {
-    throw AppError.forbidden(ErrorCode.TRANSACTION_FORBIDDEN, 'You do not own this transaction');
+    throw AppError.forbidden(ErrorCode.TRANSACTION_FORBIDDEN, 'Access denied to this transaction');
   }
 
   await prisma.transaction.delete({

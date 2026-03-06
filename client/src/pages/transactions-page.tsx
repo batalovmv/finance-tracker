@@ -9,10 +9,12 @@ import { DeleteTransactionDialog } from '@/components/transactions/delete-transa
 import { TransactionDialog } from '@/components/transactions/transaction-dialog';
 import { TransactionFilters } from '@/components/transactions/transaction-filters';
 import { TransactionTable } from '@/components/transactions/transaction-table';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { useCategories } from '@/hooks/use-categories';
 import { useExportTransactions } from '@/hooks/use-export-transactions';
 import { useTransactions } from '@/hooks/use-transactions';
+import { useTranslation } from '@/i18n';
 
 type DialogState =
   | { mode: 'closed' }
@@ -21,11 +23,12 @@ type DialogState =
   | { mode: 'delete'; transaction: TransactionResponse };
 
 export default function TransactionsPage() {
+  const { t } = useTranslation();
   const [filters, setFilters] = useState<TransactionListParams>({});
   const [page, setPage] = useState(1);
   const [dialogState, setDialogState] = useState<DialogState>({ mode: 'closed' });
 
-  const { data, isLoading } = useTransactions({ ...filters, page, sort: 'date:desc' });
+  const { data, isLoading, isError } = useTransactions({ ...filters, page, sort: 'date:desc' });
   const { data: categories = [] } = useCategories();
   const exportMutation = useExportTransactions();
 
@@ -47,10 +50,10 @@ export default function TransactionsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Transactions</h1>
-          <p className="text-sm text-muted-foreground">Manage your income and expenses.</p>
+          <h1 className="text-2xl font-bold">{t('transactions.title')}</h1>
+          <p className="text-sm text-muted-foreground">Управление доходами и расходами.</p>
         </div>
         <div className="flex gap-2">
           <Button
@@ -59,15 +62,21 @@ export default function TransactionsPage() {
             onClick={() => exportMutation.mutate(filters)}
             disabled={exportMutation.isPending}
           >
-            <Download className="mr-2 h-4 w-4" />
-            Export
+            <Download aria-hidden="true" className="mr-2 h-4 w-4" />
+            {t('transactions.export')}
           </Button>
           <Button size="sm" onClick={() => setDialogState({ mode: 'create' })}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Transaction
+            <Plus aria-hidden="true" className="mr-2 h-4 w-4" />
+            {t('transactions.add')}
           </Button>
         </div>
       </div>
+
+      {isError && (
+        <Alert variant="destructive">
+          <AlertDescription>{t('transactions.loadError')}</AlertDescription>
+        </Alert>
+      )}
 
       <TransactionFilters
         filters={filters}

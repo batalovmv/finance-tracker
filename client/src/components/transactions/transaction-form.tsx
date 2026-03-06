@@ -21,9 +21,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useTranslation } from '@/i18n';
 
 import { CategorySelectField } from './category-select-field';
-import { type TransactionFormValues, transactionFormSchema } from './transaction-form-schema';
+import { type TransactionFormValues, createTransactionFormSchema } from './transaction-form-schema';
 
 type TransactionFormProps = {
   mode: 'create' | 'edit';
@@ -42,8 +43,11 @@ export function TransactionForm({
   onSubmit,
   onCancel,
 }: TransactionFormProps) {
+  const { t } = useTranslation();
+  const schema = createTransactionFormSchema(t);
+
   const form = useForm<TransactionFormValues>({
-    resolver: zodResolver(transactionFormSchema),
+    resolver: zodResolver(schema),
     defaultValues,
     values: defaultValues,
   });
@@ -60,7 +64,7 @@ export function TransactionForm({
             name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Type</FormLabel>
+                <FormLabel>{t('form.type')}</FormLabel>
                 <Select
                   value={field.value}
                   onValueChange={(v) => {
@@ -74,8 +78,8 @@ export function TransactionForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="EXPENSE">Expense</SelectItem>
-                    <SelectItem value="INCOME">Income</SelectItem>
+                    <SelectItem value="EXPENSE">{t('form.expense')}</SelectItem>
+                    <SelectItem value="INCOME">{t('form.income')}</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -88,7 +92,7 @@ export function TransactionForm({
             name="amount"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount</FormLabel>
+                <FormLabel>{t('form.amount')}</FormLabel>
                 <FormControl>
                   <Input placeholder="0.00" {...field} />
                 </FormControl>
@@ -105,7 +109,7 @@ export function TransactionForm({
           name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Date</FormLabel>
+              <FormLabel>{t('form.date')}</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -119,9 +123,9 @@ export function TransactionForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description (optional)</FormLabel>
+              <FormLabel>{t('form.description')}</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. Monthly salary" {...field} />
+                <Input placeholder="например, Зарплата" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -130,10 +134,14 @@ export function TransactionForm({
 
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
-            Cancel
+            {t('form.cancel')}
           </Button>
           <Button type="submit" disabled={isPending}>
-            {isPending ? 'Saving...' : mode === 'create' ? 'Add Transaction' : 'Save Changes'}
+            {isPending
+              ? t('form.saving')
+              : mode === 'create'
+                ? t('form.addTransaction')
+                : t('form.save')}
           </Button>
         </DialogFooter>
       </form>

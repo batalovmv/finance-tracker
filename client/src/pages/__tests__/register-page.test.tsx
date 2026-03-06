@@ -31,63 +31,67 @@ describe('RegisterPage', () => {
   it('should render name, email, password fields and submit button', () => {
     renderRegisterPage();
 
-    expect(screen.getByLabelText(/name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /create account/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/имя/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/электронная почта/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/пароль/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /создать аккаунт/i })).toBeInTheDocument();
   });
 
   it('should show validation errors for empty submission', async () => {
     const { user } = renderRegisterPage();
 
-    await user.click(screen.getByRole('button', { name: /create account/i }));
+    await user.click(screen.getByRole('button', { name: /создать аккаунт/i }));
 
-    expect(await screen.findByText(/name is required/i)).toBeInTheDocument();
-    expect(await screen.findByText(/invalid email/i)).toBeInTheDocument();
-    expect(await screen.findByText(/password must be at least 8 characters/i)).toBeInTheDocument();
+    expect(await screen.findByText(/имя обязательно/i)).toBeInTheDocument();
+    expect(await screen.findByText(/некорректный адрес/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/пароль должен содержать не менее 8 символов/i),
+    ).toBeInTheDocument();
   });
 
   it('should show validation error for invalid email format', async () => {
     const { user } = renderRegisterPage();
 
-    await user.type(screen.getByLabelText(/name/i), 'Test User');
-    await user.type(screen.getByLabelText(/email/i), 'notanemail');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /create account/i }));
+    await user.type(screen.getByLabelText(/имя/i), 'Test User');
+    await user.type(screen.getByLabelText(/электронная почта/i), 'notanemail');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /создать аккаунт/i }));
 
-    expect(await screen.findByText(/invalid email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/некорректный адрес/i)).toBeInTheDocument();
   });
 
   it('should show validation error for short password', async () => {
     const { user } = renderRegisterPage();
 
-    await user.type(screen.getByLabelText(/name/i), 'Test User');
-    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'short');
-    await user.click(screen.getByRole('button', { name: /create account/i }));
+    await user.type(screen.getByLabelText(/имя/i), 'Test User');
+    await user.type(screen.getByLabelText(/электронная почта/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'short');
+    await user.click(screen.getByRole('button', { name: /создать аккаунт/i }));
 
-    expect(await screen.findByText(/password must be at least 8 characters/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/пароль должен содержать не менее 8 символов/i),
+    ).toBeInTheDocument();
   });
 
   it('should navigate to / on successful registration', async () => {
     const { user } = renderRegisterPage();
 
-    await user.type(screen.getByLabelText(/name/i), 'New User');
-    await user.type(screen.getByLabelText(/email/i), 'new@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /create account/i }));
+    await user.type(screen.getByLabelText(/имя/i), 'New User');
+    await user.type(screen.getByLabelText(/электронная почта/i), 'new@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /создать аккаунт/i }));
 
     expect(await screen.findByText('Dashboard')).toBeInTheDocument();
-    expect(toast.success).toHaveBeenCalledWith('Account created successfully');
+    expect(toast.success).toHaveBeenCalledWith('Аккаунт создан успешно');
   });
 
   it('should set auth store on successful registration', async () => {
     const { user } = renderRegisterPage();
 
-    await user.type(screen.getByLabelText(/name/i), 'New User');
-    await user.type(screen.getByLabelText(/email/i), 'new@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /create account/i }));
+    await user.type(screen.getByLabelText(/имя/i), 'New User');
+    await user.type(screen.getByLabelText(/электронная почта/i), 'new@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /создать аккаунт/i }));
 
     await waitFor(() => {
       const state = useAuthStore.getState();
@@ -100,20 +104,20 @@ describe('RegisterPage', () => {
   it('should show error toast when email already exists', async () => {
     const { user } = renderRegisterPage();
 
-    await user.type(screen.getByLabelText(/name/i), 'Existing User');
-    await user.type(screen.getByLabelText(/email/i), 'existing@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /create account/i }));
+    await user.type(screen.getByLabelText(/имя/i), 'Existing User');
+    await user.type(screen.getByLabelText(/электронная почта/i), 'existing@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /создать аккаунт/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Email already registered');
+      expect(toast.error).toHaveBeenCalledWith('Этот email уже зарегистрирован');
     });
   });
 
   it('should have link to login page', () => {
     renderRegisterPage();
 
-    const link = screen.getByRole('link', { name: /sign in/i });
+    const link = screen.getByRole('link', { name: /войти/i });
     expect(link).toHaveAttribute('href', '/login');
   });
 
@@ -121,7 +125,7 @@ describe('RegisterPage', () => {
     useAuthStore.getState().setAuth(mockUser, 'token');
     renderRegisterPage();
 
-    expect(screen.queryByText('Create Account')).not.toBeInTheDocument();
+    expect(screen.queryByText('Создать аккаунт')).not.toBeInTheDocument();
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 });

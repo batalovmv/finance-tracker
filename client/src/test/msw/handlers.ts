@@ -108,7 +108,7 @@ export const handlers = [
     return HttpResponse.json(
       {
         success: false,
-        error: { code: 'AUTH_INVALID_CREDENTIALS', message: 'Invalid email or password' },
+        error: { code: 'AUTH_INVALID_CREDENTIALS', message: 'Неверный email или пароль' },
       },
       { status: 400 },
     );
@@ -121,7 +121,7 @@ export const handlers = [
       return HttpResponse.json(
         {
           success: false,
-          error: { code: 'AUTH_EMAIL_EXISTS', message: 'Email already registered' },
+          error: { code: 'AUTH_EMAIL_EXISTS', message: 'Email уже зарегистрирован' },
         },
         { status: 409 },
       );

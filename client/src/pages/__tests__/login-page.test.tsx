@@ -31,47 +31,47 @@ describe('LoginPage', () => {
   it('should render email and password fields and submit button', () => {
     renderLoginPage();
 
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/электронная почта/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/пароль/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /войти/i })).toBeInTheDocument();
   });
 
   it('should show validation errors for empty submission', async () => {
     const { user } = renderLoginPage();
 
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.click(screen.getByRole('button', { name: /войти/i }));
 
-    expect(await screen.findByText(/invalid email/i)).toBeInTheDocument();
-    expect(await screen.findByText(/password is required/i)).toBeInTheDocument();
+    expect(await screen.findByText(/некорректный адрес/i)).toBeInTheDocument();
+    expect(await screen.findByText(/пароль обязателен/i)).toBeInTheDocument();
   });
 
   it('should show validation error for invalid email format', async () => {
     const { user } = renderLoginPage();
 
-    await user.type(screen.getByLabelText(/email/i), 'notanemail');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/электронная почта/i), 'notanemail');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /войти/i }));
 
-    expect(await screen.findByText(/invalid email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/некорректный адрес/i)).toBeInTheDocument();
   });
 
   it('should navigate to / on successful login', async () => {
     const { user } = renderLoginPage();
 
-    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/электронная почта/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /войти/i }));
 
     expect(await screen.findByText('Dashboard')).toBeInTheDocument();
-    expect(toast.success).toHaveBeenCalledWith('Logged in successfully');
+    expect(toast.success).toHaveBeenCalledWith('Вход выполнен успешно');
   });
 
   it('should set auth store on successful login', async () => {
     const { user } = renderLoginPage();
 
-    await user.type(screen.getByLabelText(/email/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'password123');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/электронная почта/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'password123');
+    await user.click(screen.getByRole('button', { name: /войти/i }));
 
     await waitFor(() => {
       const state = useAuthStore.getState();
@@ -84,19 +84,19 @@ describe('LoginPage', () => {
   it('should show error toast on invalid credentials', async () => {
     const { user } = renderLoginPage();
 
-    await user.type(screen.getByLabelText(/email/i), 'wrong@example.com');
-    await user.type(screen.getByLabelText(/password/i), 'wrongpassword');
-    await user.click(screen.getByRole('button', { name: /sign in/i }));
+    await user.type(screen.getByLabelText(/электронная почта/i), 'wrong@example.com');
+    await user.type(screen.getByLabelText(/пароль/i), 'wrongpassword');
+    await user.click(screen.getByRole('button', { name: /войти/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Invalid email or password');
+      expect(toast.error).toHaveBeenCalledWith('Неверный email или пароль');
     });
   });
 
   it('should have link to register page', () => {
     renderLoginPage();
 
-    const link = screen.getByRole('link', { name: /sign up/i });
+    const link = screen.getByRole('link', { name: /зарегистрироваться/i });
     expect(link).toHaveAttribute('href', '/register');
   });
 
@@ -104,7 +104,7 @@ describe('LoginPage', () => {
     useAuthStore.getState().setAuth(mockUser, 'token');
     renderLoginPage();
 
-    expect(screen.queryByText('Sign In')).not.toBeInTheDocument();
+    expect(screen.queryByText('Войти')).not.toBeInTheDocument();
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 });

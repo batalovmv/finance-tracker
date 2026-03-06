@@ -9,8 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useFormatters } from '@/hooks/use-formatters';
 import { useDeleteTransaction } from '@/hooks/use-transactions';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { useTranslation } from '@/i18n';
 
 type DeleteTransactionDialogProps = {
   open: boolean;
@@ -23,6 +24,8 @@ export function DeleteTransactionDialog({
   transaction,
   onClose,
 }: DeleteTransactionDialogProps) {
+  const { t } = useTranslation();
+  const { formatCurrency, formatDate } = useFormatters();
   const deleteMutation = useDeleteTransaction(onClose);
 
   function handleDelete() {
@@ -35,16 +38,19 @@ export function DeleteTransactionDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete Transaction</DialogTitle>
+          <DialogTitle>{t('delete.title')}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to delete this transaction?
+            {t('delete.confirm')}
             {transaction && (
               <>
                 {' '}
                 <strong>
-                  {formatCurrency(transaction.amount)} on {formatDate(transaction.date)}
+                  {t('delete.details', {
+                    amount: formatCurrency(transaction.amount),
+                    date: formatDate(transaction.date),
+                  })}
                 </strong>
-                . This action cannot be undone.
+                . {t('delete.irreversible')}
               </>
             )}
           </DialogDescription>
@@ -56,10 +62,10 @@ export function DeleteTransactionDialog({
             onClick={onClose}
             disabled={deleteMutation.isPending}
           >
-            Cancel
+            {t('delete.cancel')}
           </Button>
           <Button variant="destructive" onClick={handleDelete} disabled={deleteMutation.isPending}>
-            {deleteMutation.isPending ? 'Deleting...' : 'Delete'}
+            {deleteMutation.isPending ? t('delete.deleting') : t('delete.delete')}
           </Button>
         </DialogFooter>
       </DialogContent>

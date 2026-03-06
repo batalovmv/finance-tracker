@@ -2,6 +2,7 @@ import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll } from 'vitest';
 
 import { useAuthStore } from '@/stores/auth.store';
+import { usePreferencesStore } from '@/stores/preferences.store';
 
 import { server } from './msw/server';
 
@@ -37,5 +38,6 @@ beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterEach(() => {
   server.resetHandlers();
   useAuthStore.getState().clearAuth();
+  usePreferencesStore.setState({ language: 'ru', currency: 'RUB' });
 });
 afterAll(() => server.close());

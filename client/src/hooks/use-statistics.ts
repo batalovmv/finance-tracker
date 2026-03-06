@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import {
   type ByCategoryParams,
@@ -22,6 +22,7 @@ export function useSummary(params?: SummaryParams) {
       const res = await getSummary(params);
       return res.data.data;
     },
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -32,6 +33,7 @@ export function useByCategory(params?: ByCategoryParams) {
       const res = await getByCategory(params);
       return res.data.data;
     },
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -42,5 +44,6 @@ export function useMonthlyTrend(months?: number) {
       const res = await getMonthlyTrend(months);
       return res.data.data;
     },
+    placeholderData: keepPreviousData,
   });
 }

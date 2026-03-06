@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { translateCategory, useTranslation } from '@/i18n';
 
 import { type TransactionFormValues } from './transaction-form-schema';
 
@@ -19,33 +20,36 @@ type CategorySelectFieldProps = {
 };
 
 export function CategorySelectField({ control, categories }: CategorySelectFieldProps) {
+  const { t } = useTranslation();
+
   return (
     <FormField
       control={control}
       name="categoryId"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Category</FormLabel>
+          <FormLabel>{t('form.category')}</FormLabel>
           <Select value={field.value} onValueChange={field.onChange}>
             <FormControl>
               <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder={t('form.selectCategory')} />
               </SelectTrigger>
             </FormControl>
             <SelectContent>
               {categories.length === 0 ? (
                 <div className="px-2 py-4 text-center text-sm text-muted-foreground">
-                  No categories available
+                  {t('form.noCategories')}
                 </div>
               ) : (
                 categories.map((cat) => (
                   <SelectItem key={cat.id} value={cat.id}>
                     <span className="flex items-center gap-2">
                       <span
+                        aria-hidden="true"
                         className="inline-block h-2.5 w-2.5 rounded-full"
                         style={{ backgroundColor: cat.color }}
                       />
-                      {cat.name}
+                      {translateCategory(cat.name, t)}
                     </span>
                   </SelectItem>
                 ))

@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useCreateTransaction, useUpdateTransaction } from '@/hooks/use-transactions';
+import { useTranslation } from '@/i18n';
 
 import { TransactionForm } from './transaction-form';
 import { type TransactionFormValues } from './transaction-form-schema';
@@ -37,6 +38,7 @@ export function TransactionDialog({
   categories,
   onClose,
 }: TransactionDialogProps) {
+  const { t } = useTranslation();
   const createMutation = useCreateTransaction(onClose);
   const updateMutation = useUpdateTransaction(onClose);
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -79,11 +81,11 @@ export function TransactionDialog({
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{mode === 'create' ? 'Add Transaction' : 'Edit Transaction'}</DialogTitle>
+          <DialogTitle>
+            {mode === 'create' ? t('dialog.createTitle') : t('dialog.editTitle')}
+          </DialogTitle>
           <DialogDescription>
-            {mode === 'create'
-              ? 'Add a new income or expense transaction.'
-              : 'Update the transaction details.'}
+            {mode === 'create' ? t('dialog.createDescription') : t('dialog.editDescription')}
           </DialogDescription>
         </DialogHeader>
 

@@ -4,7 +4,8 @@ import { type ByCategoryItem } from '@shared/types';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { formatCurrency } from '@/lib/utils';
+import { useFormatters } from '@/hooks/use-formatters';
+import { translateCategory, useTranslation } from '@/i18n';
 
 type ExpenseChartProps = {
   data: ByCategoryItem[] | undefined;
@@ -12,10 +13,13 @@ type ExpenseChartProps = {
 };
 
 export function ExpenseChart({ data, isLoading }: ExpenseChartProps) {
+  const { t } = useTranslation();
+  const { formatCurrency } = useFormatters();
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Expenses by Category</CardTitle>
+        <CardTitle>{t('dashboard.expensesByCategory')}</CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
@@ -28,7 +32,9 @@ export function ExpenseChart({ data, isLoading }: ExpenseChartProps) {
             </div>
           </div>
         ) : !data?.length ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">No expense data</p>
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            {t('dashboard.noExpenseData')}
+          </p>
         ) : (
           <div className="space-y-4">
             <div className="h-[200px]">
@@ -54,7 +60,7 @@ export function ExpenseChart({ data, isLoading }: ExpenseChartProps) {
                       const item = payload[0].payload as ByCategoryItem;
                       return (
                         <div className="rounded-md border bg-popover px-3 py-2 text-sm shadow-md">
-                          <p className="font-medium">{item.category.name}</p>
+                          <p className="font-medium">{translateCategory(item.category.name, t)}</p>
                           <p className="text-muted-foreground">
                             {formatCurrency(item.amount)} ({item.percentage.toFixed(1)}%)
                           </p>
@@ -71,10 +77,11 @@ export function ExpenseChart({ data, isLoading }: ExpenseChartProps) {
                   <div className="flex items-center gap-2">
                     {/* Dynamic hex color from DB — cannot use Tailwind class */}
                     <span
+                      aria-hidden="true"
                       className="h-3 w-3 rounded-full"
                       style={{ backgroundColor: item.category.color }}
                     />
-                    <span>{item.category.name}</span>
+                    <span>{translateCategory(item.category.name, t)}</span>
                   </div>
                   <span className="font-medium">{formatCurrency(item.amount)}</span>
                 </li>

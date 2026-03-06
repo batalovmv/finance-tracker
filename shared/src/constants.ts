@@ -15,15 +15,16 @@ export const AUTH = {
 } as const;
 
 export const DEFAULT_EXPENSE_CATEGORIES = [
-  { name: 'Food & Dining', color: '#ef4444', icon: 'utensils' },
-  { name: 'Transportation', color: '#f97316', icon: 'car' },
-  { name: 'Housing', color: '#eab308', icon: 'home' },
-  { name: 'Utilities', color: '#84cc16', icon: 'zap' },
-  { name: 'Healthcare', color: '#22c55e', icon: 'heart-pulse' },
-  { name: 'Entertainment', color: '#06b6d4', icon: 'gamepad-2' },
-  { name: 'Shopping', color: '#3b82f6', icon: 'shopping-bag' },
-  { name: 'Education', color: '#6366f1', icon: 'graduation-cap' },
-  { name: 'Personal Care', color: '#8b5cf6', icon: 'sparkles' },
+  { name: 'Groceries', color: '#ef4444', icon: 'shopping-cart' },
+  { name: 'Dining Out', color: '#f97316', icon: 'coffee' },
+  { name: 'Transportation', color: '#eab308', icon: 'car' },
+  { name: 'Housing', color: '#84cc16', icon: 'home' },
+  { name: 'Utilities', color: '#22c55e', icon: 'zap' },
+  { name: 'Health', color: '#06b6d4', icon: 'heart-pulse' },
+  { name: 'Entertainment', color: '#3b82f6', icon: 'gamepad-2' },
+  { name: 'Shopping', color: '#6366f1', icon: 'shopping-bag' },
+  { name: 'Education', color: '#8b5cf6', icon: 'graduation-cap' },
+  { name: 'Subscriptions', color: '#ec4899', icon: 'repeat' },
   { name: 'Other Expenses', color: '#64748b', icon: 'circle' },
 ] as const;
 

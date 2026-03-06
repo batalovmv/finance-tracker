@@ -6,25 +6,25 @@ import { toast } from 'sonner';
 import { type LoginInput, type RegisterInput } from '@shared/types';
 
 import * as authApi from '@/api/auth.api';
+import { type TranslationKey, useTranslation } from '@/i18n';
 import { useAuthStore } from '@/stores/auth.store';
 
 export function useAuth() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { setAuth, clearAuth, isAuthenticated } = useAuthStore();
+  const { t } = useTranslation();
 
   const loginMutation = useMutation({
     mutationFn: (data: LoginInput) => authApi.login(data),
     onSuccess: ({ data: res }) => {
       setAuth(res.data.user, res.data.accessToken);
-      toast.success('Logged in successfully');
+      toast.success(t('toast.loginSuccess'));
       navigate('/');
     },
     onError: (error) => {
-      const message = axios.isAxiosError(error)
-        ? (error.response?.data?.error?.message ?? 'Login failed')
-        : 'Login failed';
-      toast.error(message);
+      const code = axios.isAxiosError(error) ? error.response?.data?.error?.code : null;
+      toast.error(code ? t(`error.${code}` as TranslationKey) : t('toast.loginError'));
     },
   });
 
@@ -32,14 +32,12 @@ export function useAuth() {
     mutationFn: (data: RegisterInput) => authApi.register(data),
     onSuccess: ({ data: res }) => {
       setAuth(res.data.user, res.data.accessToken);
-      toast.success('Account created successfully');
+      toast.success(t('toast.registerSuccess'));
       navigate('/');
     },
     onError: (error) => {
-      const message = axios.isAxiosError(error)
-        ? (error.response?.data?.error?.message ?? 'Registration failed')
-        : 'Registration failed';
-      toast.error(message);
+      const code = axios.isAxiosError(error) ? error.response?.data?.error?.code : null;
+      toast.error(code ? t(`error.${code}` as TranslationKey) : t('toast.registerError'));
     },
   });
 

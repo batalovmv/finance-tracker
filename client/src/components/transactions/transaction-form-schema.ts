@@ -1,18 +1,22 @@
 import { z } from 'zod';
 
-export const transactionFormSchema = z.object({
-  amount: z
-    .string()
-    .min(1, 'Amount is required')
-    .regex(/^\d+(\.\d{1,2})?$/, 'Enter a valid amount')
-    .refine((val) => parseFloat(val) > 0, 'Amount must be positive'),
-  type: z.enum(['INCOME', 'EXPENSE'], { required_error: 'Type is required' }),
-  categoryId: z.string().min(1, 'Category is required'),
-  date: z
-    .string()
-    .min(1, 'Date is required')
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Enter a valid date'),
-  description: z.string().max(500).optional(),
-});
+import { type TFunction } from '@/i18n';
 
-export type TransactionFormValues = z.infer<typeof transactionFormSchema>;
+export function createTransactionFormSchema(t: TFunction) {
+  return z.object({
+    amount: z
+      .string()
+      .min(1, t('validation.amountRequired'))
+      .regex(/^\d+(\.\d{1,2})?$/, t('validation.amountInvalid'))
+      .refine((val) => parseFloat(val) > 0, t('validation.amountPositive')),
+    type: z.enum(['INCOME', 'EXPENSE'], { required_error: t('validation.typeRequired') }),
+    categoryId: z.string().min(1, t('validation.categoryRequired')),
+    date: z
+      .string()
+      .min(1, t('validation.dateRequired'))
+      .regex(/^\d{4}-\d{2}-\d{2}$/, t('validation.dateInvalid')),
+    description: z.string().max(500).optional(),
+  });
+}
+
+export type TransactionFormValues = z.infer<ReturnType<typeof createTransactionFormSchema>>;

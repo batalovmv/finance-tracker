@@ -13,7 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { translateCategory, useTranslation } from '@/i18n';
 
 type TransactionFiltersProps = {
   filters: TransactionListParams;
@@ -21,17 +22,18 @@ type TransactionFiltersProps = {
   categories: CategoryResponse[];
 };
 
-const TYPE_OPTIONS = [
-  { value: 'ALL', label: 'All' },
-  { value: 'INCOME', label: 'Income' },
-  { value: 'EXPENSE', label: 'Expense' },
-] as const;
-
 export function TransactionFilters({
   filters,
   onFiltersChange,
   categories,
 }: TransactionFiltersProps) {
+  const { t } = useTranslation();
+
+  const TYPE_OPTIONS = [
+    { value: 'ALL', label: t('filter.all') },
+    { value: 'INCOME', label: t('filter.income') },
+    { value: 'EXPENSE', label: t('filter.expense') },
+  ] as const;
   const activeTab = filters.type ?? 'ALL';
   const hasFilters = !!(filters.type || filters.dateFrom || filters.dateTo || filters.categoryId);
 
@@ -59,16 +61,21 @@ export function TransactionFilters({
             </TabsTrigger>
           ))}
         </TabsList>
+        {/* Hidden panels satisfy aria-controls on each TabsTrigger */}
+        {TYPE_OPTIONS.map((opt) => (
+          <TabsContent key={opt.value} value={opt.value} className="sr-only" />
+        ))}
       </Tabs>
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="dateFrom" className="text-xs text-muted-foreground">
-          From
+          {t('filter.dateFrom')}
         </Label>
         <Input
           id="dateFrom"
           type="date"
           className="w-auto"
+          max={filters.dateTo}
           value={filters.dateFrom ?? ''}
           onChange={(e) => onFiltersChange({ ...filters, dateFrom: e.target.value || undefined })}
         />
@@ -76,19 +83,20 @@ export function TransactionFilters({
 
       <div className="flex flex-col gap-1">
         <Label htmlFor="dateTo" className="text-xs text-muted-foreground">
-          To
+          {t('filter.dateTo')}
         </Label>
         <Input
           id="dateTo"
           type="date"
           className="w-auto"
+          min={filters.dateFrom}
           value={filters.dateTo ?? ''}
           onChange={(e) => onFiltersChange({ ...filters, dateTo: e.target.value || undefined })}
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <Label className="text-xs text-muted-foreground">Category</Label>
+        <Label className="text-xs text-muted-foreground">{t('filter.category')}</Label>
         <Select
           value={filters.categoryId ?? 'all'}
           onValueChange={(v) =>
@@ -96,18 +104,19 @@ export function TransactionFilters({
           }
         >
           <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="All categories" />
+            <SelectValue placeholder={t('filter.allCategories')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
+            <SelectItem value="all">{t('filter.allCategories')}</SelectItem>
             {filteredCategories.map((cat) => (
               <SelectItem key={cat.id} value={cat.id}>
                 <span className="flex items-center gap-2">
                   <span
+                    aria-hidden="true"
                     className="inline-block h-2.5 w-2.5 rounded-full"
                     style={{ backgroundColor: cat.color }}
                   />
-                  {cat.name}
+                  {translateCategory(cat.name, t)}
                 </span>
               </SelectItem>
             ))}
@@ -117,8 +126,8 @@ export function TransactionFilters({
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={handleClearFilters} className="h-9 gap-1">
-          <X className="h-4 w-4" />
-          Clear
+          <X aria-hidden="true" className="h-4 w-4" />
+          {t('filter.reset')}
         </Button>
       )}
     </div>

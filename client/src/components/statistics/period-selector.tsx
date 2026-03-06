@@ -1,18 +1,21 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from '@/i18n';
 
 type PeriodSelectorProps = {
   value: string;
   onChange: (value: string) => void;
 };
 
-const PERIODS = [
-  { label: 'This Month', value: '1' },
-  { label: '3 Months', value: '3' },
-  { label: '6 Months', value: '6' },
-  { label: '12 Months', value: '12' },
-];
-
 export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
+  const { t } = useTranslation();
+
+  const PERIODS = [
+    { label: t('period.thisMonth'), value: '1' },
+    { label: t('period.3months'), value: '3' },
+    { label: t('period.6months'), value: '6' },
+    { label: t('period.12months'), value: '12' },
+  ];
+
   return (
     <Tabs value={value} onValueChange={onChange}>
       <TabsList>
@@ -22,6 +25,10 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
           </TabsTrigger>
         ))}
       </TabsList>
+      {/* Hidden panels satisfy aria-controls on each TabsTrigger */}
+      {PERIODS.map((p) => (
+        <TabsContent key={p.value} value={p.value} className="sr-only" />
+      ))}
     </Tabs>
   );
 }

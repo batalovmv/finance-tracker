@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, Navigate } from 'react-router';
 
-import { registerSchema } from '@shared/schemas/auth';
 import { type RegisterInput } from '@shared/types';
 
 import { Button } from '@/components/ui/button';
@@ -17,14 +16,17 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
+import { useTranslation } from '@/i18n';
+import { createRegisterSchema } from '@/schemas/auth-form';
 import { useAuthStore } from '@/stores/auth.store';
 
 export default function RegisterPage() {
   const { register, isRegisterPending } = useAuth();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const { t } = useTranslation();
 
   const form = useForm<RegisterInput>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(createRegisterSchema(t)),
     defaultValues: { name: '', email: '', password: '' },
   });
 
@@ -36,8 +38,10 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Create Account</CardTitle>
-          <CardDescription>Enter your details to create a new account</CardDescription>
+          <CardTitle>
+            <h1 className="text-2xl font-semibold">{t('auth.registerTitle')}</h1>
+          </CardTitle>
+          <CardDescription>{t('auth.registerDescription')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -51,9 +55,13 @@ export default function RegisterPage() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t('auth.name')}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Your name" {...field} />
+                      <Input
+                        autoComplete="name"
+                        placeholder={t('auth.namePlaceholder')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -64,9 +72,14 @@ export default function RegisterPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t('auth.email')}</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="you@example.com" {...field} />
+                      <Input
+                        type="email"
+                        autoComplete="email"
+                        placeholder="you@example.com"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -77,23 +90,28 @@ export default function RegisterPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('auth.password')}</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="At least 8 characters" {...field} />
+                      <Input
+                        type="password"
+                        autoComplete="new-password"
+                        placeholder={t('auth.passwordHint')}
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
               <Button type="submit" className="w-full" disabled={isRegisterPending}>
-                {isRegisterPending ? 'Creating account...' : 'Create Account'}
+                {isRegisterPending ? t('auth.registerPending') : t('auth.registerButton')}
               </Button>
             </form>
           </Form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('auth.hasAccount')}{' '}
             <Link to="/login" className="text-primary underline-offset-4 hover:underline">
-              Sign in
+              {t('auth.loginLink')}
             </Link>
           </p>
         </CardContent>

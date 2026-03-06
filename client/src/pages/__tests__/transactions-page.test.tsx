@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { toast } from 'sonner';
 
-import { mockCategories, mockTransactions } from '@/test/msw/handlers';
+import { mockTransactions } from '@/test/msw/handlers';
 import { server } from '@/test/msw/server';
 import { renderWithProviders, screen, waitFor } from '@/test/test-utils';
 
@@ -33,8 +33,8 @@ describe('TransactionsPage', () => {
 
     expect(await screen.findByText('Monthly salary')).toBeInTheDocument();
     expect(await screen.findByText('Lunch with team')).toBeInTheDocument();
-    expect(screen.getByText('Salary')).toBeInTheDocument();
-    expect(screen.getByText('Food & Dining')).toBeInTheDocument();
+    expect(screen.getByText('Зарплата')).toBeInTheDocument();
+    expect(screen.getByText('Еда и напитки')).toBeInTheDocument();
   });
 
   it('should show empty state when no transactions', async () => {
@@ -50,7 +50,7 @@ describe('TransactionsPage', () => {
 
     renderTransactionsPage();
 
-    expect(await screen.findByText('No transactions found')).toBeInTheDocument();
+    expect(await screen.findByText('Транзакции не найдены')).toBeInTheDocument();
   });
 
   it('should filter by type when Income tab is clicked', async () => {
@@ -59,7 +59,7 @@ describe('TransactionsPage', () => {
     // Wait for initial data
     expect(await screen.findByText('Monthly salary')).toBeInTheDocument();
 
-    await user.click(screen.getByRole('tab', { name: /income/i }));
+    await user.click(screen.getByRole('tab', { name: /доходы/i }));
 
     // After clicking Income tab, the handler filters by type
     await waitFor(() => {
@@ -73,11 +73,13 @@ describe('TransactionsPage', () => {
 
     await screen.findByText('Monthly salary');
 
-    await user.click(screen.getByRole('button', { name: /add transaction/i }));
+    await user.click(screen.getByRole('button', { name: /добавить транзакцию/i }));
 
-    expect(await screen.findByRole('heading', { name: /add transaction/i })).toBeInTheDocument();
-    expect(screen.getByLabelText(/amount/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/date/i)).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /добавить транзакцию/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText(/сумма/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/дата/i)).toBeInTheDocument();
   });
 
   it('should create a transaction and show success toast', async () => {
@@ -86,25 +88,25 @@ describe('TransactionsPage', () => {
     await screen.findByText('Monthly salary');
 
     // Open create dialog
-    await user.click(screen.getByRole('button', { name: /add transaction/i }));
-    await screen.findByRole('heading', { name: /add transaction/i });
+    await user.click(screen.getByRole('button', { name: /добавить транзакцию/i }));
+    await screen.findByRole('heading', { name: /добавить транзакцию/i });
 
     // Fill form
-    await user.type(screen.getByLabelText(/amount/i), '100.00');
+    await user.type(screen.getByLabelText(/сумма/i), '100.00');
 
     // Select category — need to open the category select
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i });
+    const categoryTrigger = screen.getByRole('combobox', { name: /категория/i });
     await user.click(categoryTrigger);
 
     // Find and click the first expense category
-    const categoryOption = await screen.findByRole('option', { name: /food & dining/i });
+    const categoryOption = await screen.findByRole('option', { name: /еда и напитки/i });
     await user.click(categoryOption);
 
     // Submit
-    await user.click(screen.getByRole('button', { name: /add transaction$/i }));
+    await user.click(screen.getByRole('button', { name: /добавить транзакцию$/i }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith('Transaction created');
+      expect(toast.success).toHaveBeenCalledWith('Транзакция создана');
     });
   });
 
@@ -114,17 +116,19 @@ describe('TransactionsPage', () => {
     await screen.findByText('Monthly salary');
 
     // Click the actions menu for the first transaction
-    const actionButtons = screen.getAllByRole('button', { name: /actions/i });
+    const actionButtons = screen.getAllByRole('button', { name: /действия/i });
     await user.click(actionButtons[0]);
 
     // Click Edit
-    const editOption = await screen.findByRole('menuitem', { name: /edit/i });
+    const editOption = await screen.findByRole('menuitem', { name: /редактировать/i });
     await user.click(editOption);
 
     // Verify pre-filled data
-    expect(await screen.findByRole('heading', { name: /edit transaction/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole('heading', { name: /редактировать транзакцию/i }),
+    ).toBeInTheDocument();
 
-    const amountInput = screen.getByLabelText(/amount/i);
+    const amountInput = screen.getByLabelText(/сумма/i);
     expect(amountInput).toHaveValue(mockTransactions[0].amount);
   });
 
@@ -134,22 +138,22 @@ describe('TransactionsPage', () => {
     await screen.findByText('Monthly salary');
 
     // Open edit dialog via actions menu
-    const actionButtons = screen.getAllByRole('button', { name: /actions/i });
+    const actionButtons = screen.getAllByRole('button', { name: /действия/i });
     await user.click(actionButtons[0]);
-    const editOption = await screen.findByRole('menuitem', { name: /edit/i });
+    const editOption = await screen.findByRole('menuitem', { name: /редактировать/i });
     await user.click(editOption);
 
-    await screen.findByRole('heading', { name: /edit transaction/i });
+    await screen.findByRole('heading', { name: /редактировать транзакцию/i });
 
     // Change amount
-    const amountInput = screen.getByLabelText(/amount/i);
+    const amountInput = screen.getByLabelText(/сумма/i);
     await user.clear(amountInput);
     await user.type(amountInput, '2000.00');
 
-    await user.click(screen.getByRole('button', { name: /save changes/i }));
+    await user.click(screen.getByRole('button', { name: /сохранить/i }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith('Transaction updated');
+      expect(toast.success).toHaveBeenCalledWith('Транзакция обновлена');
     });
   });
 
@@ -159,21 +163,21 @@ describe('TransactionsPage', () => {
     await screen.findByText('Monthly salary');
 
     // Click the actions menu
-    const actionButtons = screen.getAllByRole('button', { name: /actions/i });
+    const actionButtons = screen.getAllByRole('button', { name: /действия/i });
     await user.click(actionButtons[0]);
 
     // Click Delete
-    const deleteOption = await screen.findByRole('menuitem', { name: /delete/i });
+    const deleteOption = await screen.findByRole('menuitem', { name: /удалить/i });
     await user.click(deleteOption);
 
     // Verify confirmation dialog
-    expect(await screen.findByRole('heading', { name: /delete transaction/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /удалить транзакцию/i })).toBeInTheDocument();
 
     // Confirm delete
-    await user.click(screen.getByRole('button', { name: /^delete$/i }));
+    await user.click(screen.getByRole('button', { name: /^удалить$/i }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith('Transaction deleted');
+      expect(toast.success).toHaveBeenCalledWith('Транзакция удалена');
     });
   });
 
@@ -195,32 +199,67 @@ describe('TransactionsPage', () => {
     await screen.findByText('Monthly salary');
 
     // Open create dialog
-    await user.click(screen.getByRole('button', { name: /add transaction/i }));
-    await screen.findByRole('heading', { name: /add transaction/i });
+    await user.click(screen.getByRole('button', { name: /добавить транзакцию/i }));
+    await screen.findByRole('heading', { name: /добавить транзакцию/i });
 
     // Fill form
-    await user.type(screen.getByLabelText(/amount/i), '100.00');
+    await user.type(screen.getByLabelText(/сумма/i), '100.00');
 
     // Select category
-    const categoryTrigger = screen.getByRole('combobox', { name: /category/i });
+    const categoryTrigger = screen.getByRole('combobox', { name: /категория/i });
     await user.click(categoryTrigger);
-    const categoryOption = await screen.findByRole('option', { name: /food & dining/i });
+    const categoryOption = await screen.findByRole('option', { name: /еда и напитки/i });
     await user.click(categoryOption);
 
     // Submit
-    await user.click(screen.getByRole('button', { name: /add transaction$/i }));
+    await user.click(screen.getByRole('button', { name: /добавить транзакцию$/i }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Invalid amount');
+      expect(toast.error).toHaveBeenCalledWith('Ошибка валидации');
     });
   });
 
   it('should render page header and export button', async () => {
     renderTransactionsPage();
 
-    expect(screen.getByRole('heading', { name: /transactions/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /export/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /add transaction/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /транзакции/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /экспорт/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /добавить транзакцию/i })).toBeInTheDocument();
+  });
+
+  it('should show error alert when transactions fetch fails', async () => {
+    server.use(http.get('*/api/transactions', () => HttpResponse.error()));
+
+    renderTransactionsPage();
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText(/не удалось загрузить транзакции/i)).toBeInTheDocument();
+  });
+
+  it('should constrain dateTo min when dateFrom is set', async () => {
+    const { user } = renderTransactionsPage();
+    await screen.findByText('Monthly salary');
+
+    const dateFromInput = screen.getByLabelText('С');
+    const dateToInput = screen.getByLabelText('По');
+
+    await user.type(dateFromInput, '2025-01-15');
+    expect(dateToInput).toHaveAttribute('min', '2025-01-15');
+  });
+
+  it('should not show loading skeleton when switching type tabs', async () => {
+    const { user } = renderTransactionsPage();
+    await screen.findByText('Monthly salary');
+
+    // Switch to Income tab
+    await user.click(screen.getByRole('tab', { name: /доходы/i }));
+
+    // keepPreviousData should prevent skeleton flash
+    expect(document.querySelectorAll('.animate-pulse')).toHaveLength(0);
+
+    // New filtered data still loads
+    await waitFor(() => {
+      expect(screen.getByText('Monthly salary')).toBeInTheDocument();
+    });
   });
 
   it('should show all category options in filter dropdown', async () => {
@@ -231,12 +270,13 @@ describe('TransactionsPage', () => {
     // Open category filter — find the Select trigger for category filter
     const allComboboxes = screen.getAllByRole('combobox');
     // The filter category select is the one outside the dialog
-    const categoryFilter = allComboboxes.find((el) => el.textContent?.includes('All categories'));
+    const categoryFilter = allComboboxes.find((el) => el.textContent?.includes('Все категории'));
     if (!categoryFilter) throw new Error('Category filter combobox not found');
     await user.click(categoryFilter);
 
-    for (const cat of mockCategories) {
-      expect(await screen.findByRole('option', { name: new RegExp(cat.name) })).toBeInTheDocument();
+    const expectedCategoryNames = ['Еда и напитки', 'Транспорт', 'Зарплата'];
+    for (const name of expectedCategoryNames) {
+      expect(await screen.findByRole('option', { name: new RegExp(name) })).toBeInTheDocument();
     }
   });
 });
