@@ -19,12 +19,12 @@ setup('create test user and authenticate', async ({ request, page }) => {
 
   // Login via browser to set httpOnly refresh cookie
   await page.goto('/login');
-  await page.getByLabel('Email').fill(TEST_USER.email);
-  await page.getByLabel('Password').fill(TEST_USER.password);
-  await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.getByLabel('Электронная почта').fill(TEST_USER.email);
+  await page.getByLabel('Пароль').fill(TEST_USER.password);
+  await page.getByRole('button', { name: 'Войти' }).click();
 
   await expect(page).toHaveURL('/');
-  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Главная' })).toBeVisible();
 
   await page.context().storageState({ path: AUTH_FILE });
 });
