@@ -14,7 +14,7 @@
     "test:server": "pnpm --filter server test",
     "test:client": "pnpm --filter client test",
     "test:e2e": "pnpm --filter e2e test",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
