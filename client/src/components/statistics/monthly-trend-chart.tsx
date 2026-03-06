@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useFormatters } from '@/hooks/use-formatters';
 import { useTranslation } from '@/i18n';
+import { usePreferencesStore } from '@/stores/preferences.store';
 
 type MonthlyTrendChartProps = {
   data: MonthlyTrendItem[] | undefined;
@@ -21,6 +22,8 @@ type ChartData = {
 export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
   const { t } = useTranslation();
   const { formatCurrency, formatMonth } = useFormatters();
+  const currency = usePreferencesStore((s) => s.currency);
+  const currencySymbol = currency === 'RUB' ? '\u20BD' : currency === 'EUR' ? '\u20AC' : '$';
 
   function transformData(items: MonthlyTrendItem[]): ChartData[] {
     return items.map((item) => ({
@@ -64,7 +67,8 @@ export function MonthlyTrendChart({ data, isLoading }: MonthlyTrendChartProps) {
                   <XAxis dataKey="label" tick={{ fontSize: 12 }} />
                   <YAxis
                     tick={{ fontSize: 12 }}
-                    tickFormatter={(v: number) => `$${v.toLocaleString('en-US')}`}
+                    width={50}
+                    tickFormatter={(v: number) => `${currencySymbol}${v.toLocaleString('en-US')}`}
                   />
                   <Tooltip
                     content={({ active, payload, label }) => {

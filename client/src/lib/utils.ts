@@ -24,6 +24,11 @@ export function formatMonth(month: string, dateFnsLocale?: Locale): string {
   );
 }
 
+/** Returns today's date as YYYY-MM-DD string (local timezone). */
+export function getTodayString(): string {
+  return format(new Date(), 'yyyy-MM-dd');
+}
+
 export function formatDate(isoDate: string, dateFnsLocale?: Locale): string {
   const d = new Date(isoDate);
   // Create local Date from UTC components so format() displays the UTC date

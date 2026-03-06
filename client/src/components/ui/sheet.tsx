@@ -53,6 +53,7 @@ const SheetContent = forwardRef<
     <SheetOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      aria-describedby={undefined}
       className={cn(sheetVariants({ side }), className)}
       {...props}
     >

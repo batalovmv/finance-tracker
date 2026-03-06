@@ -18,13 +18,19 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
 
   return (
     <Tabs value={value} onValueChange={onChange}>
-      <TabsList>
-        {PERIODS.map((p) => (
-          <TabsTrigger key={p.value} value={p.value}>
-            {p.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
+      <div className="overflow-x-auto -mx-1 px-1">
+        <TabsList className="w-full sm:w-auto">
+          {PERIODS.map((p) => (
+            <TabsTrigger
+              key={p.value}
+              value={p.value}
+              className="flex-1 sm:flex-initial text-xs sm:text-sm px-2 sm:px-3"
+            >
+              {p.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </div>
       {/* Hidden panels satisfy aria-controls on each TabsTrigger */}
       {PERIODS.map((p) => (
         <TabsContent key={p.value} value={p.value} className="sr-only" />

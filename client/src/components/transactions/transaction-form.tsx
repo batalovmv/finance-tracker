@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Calendar } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 import { type CategoryResponse } from '@shared/types';
@@ -22,6 +23,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useTranslation } from '@/i18n';
+import { getTodayString } from '@/lib/utils';
 
 import { CategorySelectField } from './category-select-field';
 import { type TransactionFormValues, createTransactionFormSchema } from './transaction-form-schema';
@@ -110,9 +112,15 @@ export function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t('form.date')}</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
+              <div className="relative">
+                <FormControl>
+                  <Input type="date" max={getTodayString()} className="pr-9" {...field} />
+                </FormControl>
+                <Calendar
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                />
+              </div>
               <FormMessage />
             </FormItem>
           )}

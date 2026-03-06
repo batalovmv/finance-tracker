@@ -54,9 +54,9 @@ export function TransactionTable({
           <TableHeader>
             <TableRow>
               <TableHead>{t('table.date')}</TableHead>
-              <TableHead>{t('table.description')}</TableHead>
+              <TableHead className="hidden sm:table-cell">{t('table.description')}</TableHead>
               <TableHead>{t('table.category')}</TableHead>
-              <TableHead>{t('table.type')}</TableHead>
+              <TableHead className="hidden sm:table-cell">{t('table.type')}</TableHead>
               <TableHead className="text-right">{t('table.amount')}</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
@@ -67,13 +67,13 @@ export function TransactionTable({
                 <TableCell>
                   <Skeleton className="h-4 w-20" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Skeleton className="h-4 w-32" />
                 </TableCell>
                 <TableCell>
                   <Skeleton className="h-4 w-24" />
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Skeleton className="h-5 w-16" />
                 </TableCell>
                 <TableCell className="text-right">
@@ -106,9 +106,9 @@ export function TransactionTable({
           <TableHeader>
             <TableRow>
               <TableHead>{t('table.date')}</TableHead>
-              <TableHead>{t('table.description')}</TableHead>
+              <TableHead className="hidden sm:table-cell">{t('table.description')}</TableHead>
               <TableHead>{t('table.category')}</TableHead>
-              <TableHead>{t('table.type')}</TableHead>
+              <TableHead className="hidden sm:table-cell">{t('table.type')}</TableHead>
               <TableHead className="text-right">{t('table.amount')}</TableHead>
               <TableHead className="w-[50px]" />
             </TableRow>
@@ -116,8 +116,10 @@ export function TransactionTable({
           <TableBody>
             {transactions.map((tx) => (
               <TableRow key={tx.id}>
-                <TableCell className="whitespace-nowrap">{formatDate(tx.date)}</TableCell>
-                <TableCell className="max-w-[200px] truncate">
+                <TableCell className="whitespace-nowrap text-xs sm:text-sm">
+                  {formatDate(tx.date)}
+                </TableCell>
+                <TableCell className="hidden sm:table-cell max-w-[200px] truncate">
                   {tx.description || <span className="text-muted-foreground">&mdash;</span>}
                 </TableCell>
                 <TableCell>
@@ -127,10 +129,12 @@ export function TransactionTable({
                       className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
                       style={{ backgroundColor: tx.category.color }}
                     />
-                    <span className="truncate">{translateCategory(tx.category.name, t)}</span>
+                    <span className="truncate max-w-[80px] sm:max-w-none">
+                      {translateCategory(tx.category.name, t)}
+                    </span>
                   </span>
                 </TableCell>
-                <TableCell>
+                <TableCell className="hidden sm:table-cell">
                   <Badge
                     variant="outline"
                     className={cn(
@@ -144,7 +148,7 @@ export function TransactionTable({
                 </TableCell>
                 <TableCell
                   className={cn(
-                    'text-right font-medium whitespace-nowrap',
+                    'text-right font-medium whitespace-nowrap text-xs sm:text-sm',
                     tx.type === 'INCOME'
                       ? 'text-green-600 dark:text-green-400'
                       : 'text-red-600 dark:text-red-400',

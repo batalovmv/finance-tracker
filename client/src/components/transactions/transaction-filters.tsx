@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { Calendar, X } from 'lucide-react';
 
 import { type CategoryResponse, type TransactionType } from '@shared/types';
 
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { translateCategory, useTranslation } from '@/i18n';
+import { getTodayString } from '@/lib/utils';
 
 type TransactionFiltersProps = {
   filters: TransactionListParams;
@@ -35,7 +36,8 @@ export function TransactionFilters({
     { value: 'EXPENSE', label: t('filter.expense') },
   ] as const;
   const activeTab = filters.type ?? 'ALL';
-  const hasFilters = !!(filters.type || filters.dateFrom || filters.dateTo || filters.categoryId);
+  const today = getTodayString();
+  const hasFilters = !!(filters.dateFrom || filters.dateTo || filters.categoryId);
 
   const filteredCategories = filters.type
     ? categories.filter((c) => c.type === filters.type)
@@ -67,32 +69,49 @@ export function TransactionFilters({
         ))}
       </Tabs>
 
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="dateFrom" className="text-xs text-muted-foreground">
-          {t('filter.dateFrom')}
-        </Label>
-        <Input
-          id="dateFrom"
-          type="date"
-          className="w-auto"
-          max={filters.dateTo}
-          value={filters.dateFrom ?? ''}
-          onChange={(e) => onFiltersChange({ ...filters, dateFrom: e.target.value || undefined })}
-        />
-      </div>
+      <div className="grid grid-cols-2 gap-3 sm:flex sm:gap-4">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="dateFrom" className="text-xs text-muted-foreground">
+            {t('filter.dateFrom')}
+          </Label>
+          <div className="relative">
+            <Input
+              id="dateFrom"
+              type="date"
+              className="w-full pr-9 sm:w-auto"
+              max={filters.dateTo ?? today}
+              value={filters.dateFrom ?? ''}
+              onChange={(e) =>
+                onFiltersChange({ ...filters, dateFrom: e.target.value || undefined })
+              }
+            />
+            <Calendar
+              aria-hidden="true"
+              className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            />
+          </div>
+        </div>
 
-      <div className="flex flex-col gap-1">
-        <Label htmlFor="dateTo" className="text-xs text-muted-foreground">
-          {t('filter.dateTo')}
-        </Label>
-        <Input
-          id="dateTo"
-          type="date"
-          className="w-auto"
-          min={filters.dateFrom}
-          value={filters.dateTo ?? ''}
-          onChange={(e) => onFiltersChange({ ...filters, dateTo: e.target.value || undefined })}
-        />
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="dateTo" className="text-xs text-muted-foreground">
+            {t('filter.dateTo')}
+          </Label>
+          <div className="relative">
+            <Input
+              id="dateTo"
+              type="date"
+              className="w-full pr-9 sm:w-auto"
+              max={today}
+              min={filters.dateFrom}
+              value={filters.dateTo ?? ''}
+              onChange={(e) => onFiltersChange({ ...filters, dateTo: e.target.value || undefined })}
+            />
+            <Calendar
+              aria-hidden="true"
+              className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+            />
+          </div>
+        </div>
       </div>
 
       <div className="flex flex-col gap-1">
@@ -103,7 +122,7 @@ export function TransactionFilters({
             onFiltersChange({ ...filters, categoryId: v === 'all' ? undefined : v })
           }
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder={t('filter.allCategories')} />
           </SelectTrigger>
           <SelectContent>

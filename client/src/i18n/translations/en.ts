@@ -52,6 +52,7 @@ export const en: Record<TranslationKey, string> = {
 
   // Transactions page
   'transactions.title': 'Transactions',
+  'transactions.subtitle': 'Manage your income and expenses.',
   'transactions.export': 'Export',
   'transactions.add': 'Add Transaction',
   'transactions.loadError': 'Failed to load transactions. Please refresh the page.',

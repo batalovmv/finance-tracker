@@ -50,6 +50,7 @@ export const ru = {
 
   // Transactions page
   'transactions.title': 'Транзакции',
+  'transactions.subtitle': 'Управление доходами и расходами.',
   'transactions.export': 'Экспорт',
   'transactions.add': 'Добавить транзакцию',
   'transactions.loadError': 'Не удалось загрузить транзакции. Попробуйте обновить страницу.',
